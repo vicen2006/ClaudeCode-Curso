@@ -227,7 +227,13 @@ function draw() {
   ctx.textBaseline = 'top';
   ctx.fillText('PUNTOS: ' + state.score, 12, 12);
   ctx.textAlign = 'right';
-  ctx.fillText('VIDAS: ' + state.lives, W - 12, 12);
+  const LIFE_SIZE = 12, LIFE_GAP = 4;
+  let lx = W - 12 - LIFE_SIZE;
+  for (let i = 0; i < state.lives; i++) {
+    drawSprite(ctx, 'ball', lx, 12, LIFE_SIZE, LIFE_SIZE);
+    lx -= LIFE_SIZE + LIFE_GAP;
+  }
+  ctx.fillText('VIDAS:', lx + LIFE_SIZE, 12);
 
   if (isEnded()) {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
