@@ -9,7 +9,7 @@ const COLS = 15;
 const ROW_COLORS = ['gray', 'red', 'yellow', 'cyan', 'magenta', 'green'];
 const BLOCK_TOP = 64;
 
-const state = { mode: 'ready', score: 0 };
+const state = { mode: 'ready', score: 0, lives: 3 };
 
 let blocks = [];
 
@@ -84,6 +84,18 @@ function launchBall() {
   state.mode = 'playing';
 }
 
+function restartGame() {
+  state.score = 0;
+  state.lives = 3;
+  state.mode = 'ready';
+  buildBlocks();
+  stickBall();
+}
+
+function isEnded() {
+  return state.mode === 'gameover' || state.mode === 'won';
+}
+
 const keys = {};
 
 window.addEventListener('keydown', (e) => {
@@ -92,6 +104,7 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
     launchBall();
   }
+  if (e.code === 'Enter' && isEnded()) restartGame();
 });
 window.addEventListener('keyup', (e) => {
   keys[e.code] = false;
@@ -104,7 +117,10 @@ canvas.addEventListener('mousemove', (e) => {
   clampPaddle();
 });
 
-canvas.addEventListener('click', launchBall);
+canvas.addEventListener('click', () => {
+  if (isEnded()) restartGame();
+  else launchBall();
+});
 
 function clampPaddle() {
   paddle.x = Math.max(0, Math.min(W - paddle.w, paddle.x));
@@ -113,6 +129,9 @@ function clampPaddle() {
 function update(dt) {
   const now = performance.now();
   blocks = blocks.filter((b) => !b.exploding || now - b.explodeStart < EXPLOSION_DURATION);
+
+  if (state.mode === 'playing' && blocks.length === 0) state.mode = 'won';
+  if (isEnded()) return;
 
   let dir = 0;
   if (keys.ArrowLeft || keys.KeyA) dir -= 1;
@@ -158,7 +177,8 @@ function update(dt) {
   }
 
   if (ball.y - ball.r > H) {
-    state.mode = 'ready';
+    state.lives -= 1;
+    state.mode = state.lives > 0 ? 'ready' : 'gameover';
     stickBall();
   }
 }
@@ -187,6 +207,21 @@ function draw() {
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
   ctx.fillText('PUNTOS: ' + state.score, 12, 12);
+  ctx.textAlign = 'right';
+  ctx.fillText('VIDAS: ' + state.lives, W - 12, 12);
+
+  if (isEnded()) {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '32px monospace';
+    ctx.fillText(state.mode === 'won' ? '¡VICTORIA!' : 'GAME OVER', W / 2, H / 2 - 24);
+    ctx.font = '16px monospace';
+    ctx.fillText('PUNTOS: ' + state.score, W / 2, H / 2 + 12);
+    ctx.fillText('Enter o clic para reiniciar', W / 2, H / 2 + 40);
+  }
 }
 
 let last = 0;
