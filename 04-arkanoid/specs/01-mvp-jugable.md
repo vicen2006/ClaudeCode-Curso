@@ -1,6 +1,6 @@
 # SPEC 01 — MVP jugable de Arkanoid
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** Ninguna
 > **Date:** 2026-11-11
 > **Objective:** Construir un Arkanoid jugable de un solo nivel, con paddle, bola, bloques, vidas, puntuación, sonidos y pantallas de victoria y derrota.
@@ -77,22 +77,22 @@ Convenciones:
 
 ## Criterios de aceptación
 
-- [ ] Abrir `index.html` desde `file://` carga el juego sin errores en la consola.
-- [ ] El canvas tiene resolución interna 480x640 y se ve centrado con los píxeles nítidos.
-- [ ] El paddle se mueve con flechas izquierda/derecha, con A/D y con el mouse, y no sale del canvas.
-- [ ] Al iniciar, la bola está sobre el paddle y lo sigue hasta que se pulsa espacio o se hace clic.
-- [ ] La bola rebota en paredes izquierda, derecha y techo.
-- [ ] Un impacto en el borde del paddle desvía la bola más que uno en el centro, y la velocidad total no cambia.
-- [ ] El nivel muestra 6 filas x 15 columnas: gris, red, yellow, cyan, magenta, green de arriba abajo.
-- [ ] Un bloque no gris se rompe con 1 golpe y suma exactamente 10 puntos.
-- [ ] Un bloque gris se rompe con 2 golpes y suma exactamente 20 puntos.
-- [ ] Al romperse un bloque se reproduce la animación de 4 frames durante 150 ms y luego desaparece.
-- [ ] Cada rebote reproduce `ball-bounce.mp3` y cada bloque roto reproduce `break-sound.mp3`.
-- [ ] El HUD muestra puntuación y vidas, y se actualizan en tiempo real.
-- [ ] Perder la bola resta 1 vida y devuelve a `ready`; la partida empieza con 3 vidas.
-- [ ] Con 0 vidas aparece la pantalla de derrota; Enter o clic reinicia con 3 vidas, puntuación 0 y todos los bloques.
-- [ ] Al romper todos los bloques aparece la pantalla de victoria; Enter o clic reinicia.
-- [ ] El proyecto no usa dependencias, build ni módulos ES.
+- [X] Abrir `index.html` desde `file://` carga el juego sin errores en la consola.
+- [X] El canvas tiene resolución interna 480x640 y se ve centrado con los píxeles nítidos.
+- [X] El paddle se mueve con flechas izquierda/derecha, con A/D y con el mouse, y no sale del canvas.
+- [X] Al iniciar, la bola está sobre el paddle y lo sigue hasta que se pulsa espacio o se hace clic.
+- [X] La bola rebota en paredes izquierda, derecha y techo.
+- [X] Un impacto en el borde del paddle desvía la bola más que uno en el centro, y la velocidad total no cambia.
+- [X] El nivel muestra 6 filas x 15 columnas: gris, red, yellow, cyan, magenta, green de arriba abajo.
+- [X] Un bloque no gris se rompe con 1 golpe y suma exactamente 10 puntos.
+- [X] Un bloque gris se rompe con 2 golpes y suma exactamente 20 puntos.
+- [X] Al romperse un bloque se reproduce la animación de 4 frames durante 150 ms y luego desaparece.
+- [X] Cada rebote reproduce `ball-bounce.mp3` y cada bloque roto reproduce `break-sound.mp3`.
+- [X] El HUD muestra puntuación y vidas, y se actualizan en tiempo real.
+- [X] Perder la bola resta 1 vida y devuelve a `ready`; la partida empieza con 3 vidas.
+- [X] Con 0 vidas aparece la pantalla de derrota; Enter o clic reinicia con 3 vidas, puntuación 0 y todos los bloques.
+- [X] Al romper todos los bloques aparece la pantalla de victoria; Enter o clic reinicia.
+- [X] El proyecto no usa dependencias, build ni módulos ES.
 
 ## Decisiones
 
