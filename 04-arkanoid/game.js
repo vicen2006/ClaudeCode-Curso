@@ -4,7 +4,61 @@ const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 ctx.imageSmoothingEnabled = false;
 
+const BLOCK_W = 32, BLOCK_H = 16;
+const COLS = 15;
+const ROW_COLORS = ['gray', 'red', 'yellow', 'cyan', 'magenta', 'green'];
+const BLOCK_TOP = 64;
+
 const state = { mode: 'ready' };
+
+let blocks = [];
+
+function buildBlocks() {
+  blocks = [];
+  ROW_COLORS.forEach((color, row) => {
+    for (let col = 0; col < COLS; col++) {
+      blocks.push({
+        x: col * BLOCK_W,
+        y: BLOCK_TOP + row * BLOCK_H,
+        color,
+        hp: 1,
+      });
+    }
+  });
+}
+
+function collideBlocks() {
+  for (const block of blocks) {
+    const cx = Math.max(block.x, Math.min(ball.x, block.x + BLOCK_W));
+    const cy = Math.max(block.y, Math.min(ball.y, block.y + BLOCK_H));
+    const dx = ball.x - cx;
+    const dy = ball.y - cy;
+    if (dx * dx + dy * dy >= ball.r * ball.r) continue;
+
+    // eje de menor penetración: un solo bloque por paso
+    const overlapX = dx === 0 && dy === 0
+      ? Math.min(ball.x - block.x, block.x + BLOCK_W - ball.x) + ball.r
+      : ball.r - Math.abs(dx);
+    const overlapY = dx === 0 && dy === 0
+      ? Math.min(ball.y - block.y, block.y + BLOCK_H - ball.y) + ball.r
+      : ball.r - Math.abs(dy);
+    const hitSide = Math.abs(dx) > Math.abs(dy) || (dx === 0 && dy === 0 && overlapX < overlapY);
+
+    if (hitSide) {
+      const dir = ball.x < block.x + BLOCK_W / 2 ? -1 : 1;
+      ball.x += dir * overlapX;
+      ball.vx = dir * Math.abs(ball.vx);
+    } else {
+      const dir = ball.y < block.y + BLOCK_H / 2 ? -1 : 1;
+      ball.y += dir * overlapY;
+      ball.vy = dir * Math.abs(ball.vy);
+    }
+
+    block.hp -= 1;
+    if (block.hp <= 0) blocks = blocks.filter((b) => b !== block);
+    return;
+  }
+}
 
 const paddle = { x: (W - 96) / 2, y: H - 40, w: 96, h: 14, speed: 420 };
 const ball = { x: 0, y: 0, r: 6, vx: 0, vy: 0, speed: 300 };
@@ -75,6 +129,8 @@ function update(dt) {
     ball.vy = Math.abs(ball.vy);
   }
 
+  collideBlocks();
+
   if (
     ball.vy > 0 &&
     ball.y + ball.r >= paddle.y &&
@@ -99,6 +155,9 @@ function update(dt) {
 function draw() {
   ctx.fillStyle = '#0b0b1a';
   ctx.fillRect(0, 0, W, H);
+  for (const block of blocks) {
+    drawSprite(ctx, 'block_' + block.color, block.x, block.y, BLOCK_W, BLOCK_H);
+  }
   drawSprite(ctx, 'paddle', paddle.x, paddle.y, paddle.w, paddle.h);
   drawSprite(ctx, 'ball', ball.x - 6, ball.y - 6, 12, 12);
 }
@@ -114,6 +173,7 @@ function frame(now) {
 }
 
 loadSpritesheet(() => {
+  buildBlocks();
   stickBall();
   requestAnimationFrame((now) => {
     last = now;
