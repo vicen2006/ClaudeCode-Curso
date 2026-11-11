@@ -9,6 +9,18 @@ const COLS = 15;
 const ROW_COLORS = ['gray', 'red', 'yellow', 'cyan', 'magenta', 'green'];
 const BLOCK_TOP = 64;
 
+const sounds = {
+  bounce: new Audio('assets/sounds/ball-bounce.mp3'),
+  break: new Audio('assets/sounds/break-sound.mp3'),
+};
+
+function playSound(name) {
+  const s = sounds[name];
+  s.currentTime = 0;
+  const p = s.play();
+  if (p) p.catch(() => {});
+}
+
 const state = { mode: 'ready', score: 0, lives: 3 };
 
 let blocks = [];
@@ -63,6 +75,9 @@ function collideBlocks() {
       state.score += block.points;
       block.exploding = true;
       block.explodeStart = performance.now();
+      playSound('break');
+    } else {
+      playSound('bounce');
     }
     return;
   }
@@ -150,13 +165,16 @@ function update(dt) {
   if (ball.x - ball.r < 0) {
     ball.x = ball.r;
     ball.vx = Math.abs(ball.vx);
+    playSound('bounce');
   } else if (ball.x + ball.r > W) {
     ball.x = W - ball.r;
     ball.vx = -Math.abs(ball.vx);
+    playSound('bounce');
   }
   if (ball.y - ball.r < 0) {
     ball.y = ball.r;
     ball.vy = Math.abs(ball.vy);
+    playSound('bounce');
   }
 
   collideBlocks();
@@ -174,6 +192,7 @@ function update(dt) {
     ball.y = paddle.y - ball.r;
     ball.vx = ball.speed * Math.sin(angle);
     ball.vy = -ball.speed * Math.cos(angle);
+    playSound('bounce');
   }
 
   if (ball.y - ball.r > H) {
