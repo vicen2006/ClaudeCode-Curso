@@ -9,7 +9,7 @@ const COLS = 15;
 const ROW_COLORS = ['gray', 'red', 'yellow', 'cyan', 'magenta', 'green'];
 const BLOCK_TOP = 64;
 
-const state = { mode: 'ready' };
+const state = { mode: 'ready', score: 0 };
 
 let blocks = [];
 
@@ -21,7 +21,8 @@ function buildBlocks() {
         x: col * BLOCK_W,
         y: BLOCK_TOP + row * BLOCK_H,
         color,
-        hp: 1,
+        hp: color === 'gray' ? 2 : 1,
+        points: color === 'gray' ? 20 : 10,
       });
     }
   });
@@ -55,7 +56,10 @@ function collideBlocks() {
     }
 
     block.hp -= 1;
-    if (block.hp <= 0) blocks = blocks.filter((b) => b !== block);
+    if (block.hp <= 0) {
+      state.score += block.points;
+      blocks = blocks.filter((b) => b !== block);
+    }
     return;
   }
 }
@@ -160,6 +164,12 @@ function draw() {
   }
   drawSprite(ctx, 'paddle', paddle.x, paddle.y, paddle.w, paddle.h);
   drawSprite(ctx, 'ball', ball.x - 6, ball.y - 6, 12, 12);
+
+  ctx.fillStyle = '#fff';
+  ctx.font = '16px monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText('PUNTOS: ' + state.score, 12, 12);
 }
 
 let last = 0;
