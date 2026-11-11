@@ -23,6 +23,8 @@ function buildBlocks() {
         color,
         hp: color === 'gray' ? 2 : 1,
         points: color === 'gray' ? 20 : 10,
+        exploding: false,
+        explodeStart: 0,
       });
     }
   });
@@ -30,6 +32,7 @@ function buildBlocks() {
 
 function collideBlocks() {
   for (const block of blocks) {
+    if (block.exploding) continue;
     const cx = Math.max(block.x, Math.min(ball.x, block.x + BLOCK_W));
     const cy = Math.max(block.y, Math.min(ball.y, block.y + BLOCK_H));
     const dx = ball.x - cx;
@@ -58,7 +61,8 @@ function collideBlocks() {
     block.hp -= 1;
     if (block.hp <= 0) {
       state.score += block.points;
-      blocks = blocks.filter((b) => b !== block);
+      block.exploding = true;
+      block.explodeStart = performance.now();
     }
     return;
   }
@@ -107,6 +111,9 @@ function clampPaddle() {
 }
 
 function update(dt) {
+  const now = performance.now();
+  blocks = blocks.filter((b) => !b.exploding || now - b.explodeStart < EXPLOSION_DURATION);
+
   let dir = 0;
   if (keys.ArrowLeft || keys.KeyA) dir -= 1;
   if (keys.ArrowRight || keys.KeyD) dir += 1;
@@ -159,8 +166,18 @@ function update(dt) {
 function draw() {
   ctx.fillStyle = '#0b0b1a';
   ctx.fillRect(0, 0, W, H);
+  const now = performance.now();
   for (const block of blocks) {
-    drawSprite(ctx, 'block_' + block.color, block.x, block.y, BLOCK_W, BLOCK_H);
+    if (block.exploding) {
+      const frames = EXPLOSION_FRAMES[block.color];
+      const i = Math.min(
+        frames.length - 1,
+        Math.floor((now - block.explodeStart) / (EXPLOSION_DURATION / frames.length))
+      );
+      drawFrame(ctx, frames[i], block.x, block.y, BLOCK_W, BLOCK_H);
+    } else {
+      drawSprite(ctx, 'block_' + block.color, block.x, block.y, BLOCK_W, BLOCK_H);
+    }
   }
   drawSprite(ctx, 'paddle', paddle.x, paddle.y, paddle.w, paddle.h);
   drawSprite(ctx, 'ball', ball.x - 6, ball.y - 6, 12, 12);
