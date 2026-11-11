@@ -74,6 +74,26 @@ function update(dt) {
     ball.y = ball.r;
     ball.vy = Math.abs(ball.vy);
   }
+
+  if (
+    ball.vy > 0 &&
+    ball.y + ball.r >= paddle.y &&
+    ball.y - ball.r <= paddle.y + paddle.h &&
+    ball.x >= paddle.x - ball.r &&
+    ball.x <= paddle.x + paddle.w + ball.r
+  ) {
+    const center = paddle.x + paddle.w / 2;
+    const offset = Math.max(-1, Math.min(1, (ball.x - center) / (paddle.w / 2)));
+    const angle = offset * 60 * Math.PI / 180;
+    ball.y = paddle.y - ball.r;
+    ball.vx = ball.speed * Math.sin(angle);
+    ball.vy = -ball.speed * Math.cos(angle);
+  }
+
+  if (ball.y - ball.r > H) {
+    state.mode = 'ready';
+    stickBall();
+  }
 }
 
 function draw() {
