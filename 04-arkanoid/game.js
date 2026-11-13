@@ -176,6 +176,12 @@ function restartGame() {
   stickBall();
 }
 
+function nextLevel() {
+  loadLevel(state.level + 1);
+  state.mode = 'ready';
+  stickBall();
+}
+
 function isEnded() {
   return state.mode === 'gameover' || state.mode === 'won';
 }
@@ -188,7 +194,10 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
     launchBall();
   }
-  if (e.code === 'Enter' && isEnded()) restartGame();
+  if (e.code === 'Enter') {
+    if (isEnded()) restartGame();
+    else if (state.mode === 'levelcomplete') nextLevel();
+  }
 });
 window.addEventListener('keyup', (e) => {
   keys[e.code] = false;
@@ -203,6 +212,7 @@ canvas.addEventListener('mousemove', (e) => {
 
 canvas.addEventListener('click', () => {
   if (isEnded()) restartGame();
+  else if (state.mode === 'levelcomplete') nextLevel();
   else launchBall();
 });
 
@@ -214,8 +224,10 @@ function update(dt) {
   const now = performance.now();
   blocks = blocks.filter((b) => !b.exploding || now - b.explodeStart < EXPLOSION_DURATION);
 
-  if (state.mode === 'playing' && blocks.length === 0) state.mode = 'won';
-  if (isEnded()) return;
+  if (state.mode === 'playing' && blocks.length === 0) {
+    state.mode = state.level < MAX_LEVEL ? 'levelcomplete' : 'won';
+  }
+  if (isEnded() || state.mode === 'levelcomplete') return;
 
   let dir = 0;
   if (keys.ArrowLeft || keys.KeyA) dir -= 1;
@@ -304,17 +316,21 @@ function draw() {
   }
   ctx.fillText('VIDAS:', lx + LIFE_SIZE, 12);
 
-  if (isEnded()) {
+  if (isEnded() || state.mode === 'levelcomplete') {
+    const titles = { won: '¡VICTORIA!', gameover: 'GAME OVER', levelcomplete: 'NIVEL COMPLETADO' };
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = '32px monospace';
-    ctx.fillText(state.mode === 'won' ? '¡VICTORIA!' : 'GAME OVER', W / 2, H / 2 - 24);
+    ctx.fillText(titles[state.mode], W / 2, H / 2 - 24);
     ctx.font = '16px monospace';
     ctx.fillText('PUNTOS: ' + state.score, W / 2, H / 2 + 12);
-    ctx.fillText('Enter o clic para reiniciar', W / 2, H / 2 + 40);
+    ctx.fillText(
+      state.mode === 'levelcomplete' ? 'Enter o clic para continuar' : 'Enter o clic para reiniciar',
+      W / 2, H / 2 + 40
+    );
   }
 }
 
