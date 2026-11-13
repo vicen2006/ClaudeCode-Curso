@@ -7,6 +7,9 @@ ctx.imageSmoothingEnabled = false;
 const BLOCK_W = 32, BLOCK_H = 16;
 const COLS = 15;
 const BLOCK_TOP = 64;
+const MAX_LEVEL = 5;
+const BASE_BALL_SPEED = 300, BALL_SPEED_STEP = 25;  // px/s
+const BASE_PADDLE_W = 96, PADDLE_W_STEP = 8;        // px
 
 // carácter de la matriz -> bloque
 const BLOCK_TYPES = {
@@ -44,11 +47,15 @@ function playSound(name) {
   if (p) p.catch(() => {});
 }
 
-const state = { mode: 'ready', score: 0, lives: 3 };
+const state = { mode: 'ready', level: 1, score: 0, lives: 3 };
 
 let blocks = [];
 
 function loadLevel(n) {
+  state.level = n;
+  ball.speed = BASE_BALL_SPEED + BALL_SPEED_STEP * (n - 1);
+  paddle.w = BASE_PADDLE_W - PADDLE_W_STEP * (n - 1);
+  paddle.x = (W - paddle.w) / 2;
   blocks = [];
   LEVELS[n - 1].forEach((rowStr, row) => {
     for (let col = 0; col < COLS; col++) {
