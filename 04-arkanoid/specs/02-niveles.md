@@ -1,6 +1,6 @@
 # SPEC 02 — Sistema de niveles
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 01
 > **Date:** 2026-11-13
 > **Objective:** Reemplazar el nivel único por 5 niveles fijos de dificultad creciente (diseño, bloques de varios golpes, velocidad de la bola y ancho del paddle), con pantalla de nivel completado y victoria tras el último.
