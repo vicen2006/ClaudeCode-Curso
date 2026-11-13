@@ -33,6 +33,43 @@ const LEVELS = [
     'ppppppppppppppp',
     'nnnnnnnnnnnnnnn',
   ],
+  [
+    'g.g.g.g.g.g.g.g',
+    'rrrrrrrrrrrrrrr',
+    '.yyyyyyyyyyyyy.',
+    '..ccccccccccc..',
+    '...ppppppppp...',
+    '....nnnnnnn....',
+  ],
+  [
+    'ggggggggggggggg',
+    'hhhhhhhhhhhhhhh',
+    'r.r.r.r.r.r.r.r',
+    '.y.y.y.y.y.y.y.',
+    'c.c.c.c.c.c.c.c',
+    '.p.p.p.p.p.p.p.',
+    'nnnnnnnnnnnnnnn',
+  ],
+  [
+    'mmmmmmmmmmmmmmm',
+    'ggggggggggggggg',
+    'r.rr.rr.rr.rr.r',
+    'y.yy.yy.yy.yy.y',
+    'c.cc.cc.cc.cc.c',
+    'p.pp.pp.pp.pp.p',
+    'hhhhhhhhhhhhhhh',
+    'nnnnnnnnnnnnnnn',
+  ],
+  [
+    'mmmmmmmmmmmmmmm',
+    'mgggggggggggggm',
+    'mgrrrrrrrrrrrgm',
+    'mgryyyyyyyyyrgm',
+    'mgrycccccccyrgm',
+    'mgrycpppppcyrgm',
+    'mgrycphhhpcyrgm',
+    'mgrycpnnnpcyrgm',
+  ],
 ];
 
 const sounds = {
