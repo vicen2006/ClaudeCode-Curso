@@ -6,8 +6,31 @@ ctx.imageSmoothingEnabled = false;
 
 const BLOCK_W = 32, BLOCK_H = 16;
 const COLS = 15;
-const ROW_COLORS = ['gray', 'red', 'yellow', 'cyan', 'magenta', 'green'];
 const BLOCK_TOP = 64;
+
+// carácter de la matriz -> bloque
+const BLOCK_TYPES = {
+  g: { color: 'gray', hp: 2, points: 20 },
+  m: { color: 'gray', hp: 3, points: 30 },
+  r: { color: 'red', hp: 1, points: 10 },
+  y: { color: 'yellow', hp: 1, points: 10 },
+  c: { color: 'cyan', hp: 1, points: 10 },
+  p: { color: 'magenta', hp: 1, points: 10 },
+  h: { color: 'hotpink', hp: 1, points: 10 },
+  n: { color: 'green', hp: 1, points: 10 },
+};
+
+// cada fila tiene exactamente COLS caracteres; '.' es hueco
+const LEVELS = [
+  [
+    'ggggggggggggggg',
+    'rrrrrrrrrrrrrrr',
+    'yyyyyyyyyyyyyyy',
+    'ccccccccccccccc',
+    'ppppppppppppppp',
+    'nnnnnnnnnnnnnnn',
+  ],
+];
 
 const sounds = {
   bounce: new Audio('assets/sounds/ball-bounce.mp3'),
@@ -25,16 +48,18 @@ const state = { mode: 'ready', score: 0, lives: 3 };
 
 let blocks = [];
 
-function buildBlocks() {
+function loadLevel(n) {
   blocks = [];
-  ROW_COLORS.forEach((color, row) => {
+  LEVELS[n - 1].forEach((rowStr, row) => {
     for (let col = 0; col < COLS; col++) {
+      const type = BLOCK_TYPES[rowStr[col]];
+      if (!type) continue;
       blocks.push({
         x: col * BLOCK_W,
         y: BLOCK_TOP + row * BLOCK_H,
-        color,
-        hp: color === 'gray' ? 2 : 1,
-        points: color === 'gray' ? 20 : 10,
+        color: type.color,
+        hp: type.hp,
+        points: type.points,
         exploding: false,
         explodeStart: 0,
       });
@@ -103,7 +128,7 @@ function restartGame() {
   state.score = 0;
   state.lives = 3;
   state.mode = 'ready';
-  buildBlocks();
+  loadLevel(1);
   stickBall();
 }
 
@@ -260,7 +285,7 @@ function frame(now) {
 }
 
 loadSpritesheet(() => {
-  buildBlocks();
+  loadLevel(1);
   stickBall();
   requestAnimationFrame((now) => {
     last = now;
