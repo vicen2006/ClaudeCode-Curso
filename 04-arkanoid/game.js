@@ -307,6 +307,8 @@ function draw() {
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
   ctx.fillText('PUNTOS: ' + state.score, 12, 12);
+  ctx.textAlign = 'center';
+  ctx.fillText('NIVEL ' + state.level + '/' + MAX_LEVEL, W / 2, 12);
   ctx.textAlign = 'right';
   const LIFE_SIZE = 12, LIFE_GAP = 4;
   let lx = W - 12 - LIFE_SIZE;
